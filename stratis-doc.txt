@@ -1,0 +1,89 @@
+####### STRATIS - RHEL8 ##########################
+
+Installation————
+
+1. yum install stratisd stratis-cli
+2. systemctl start stratisd
+3  systemctl enable stratisd
+
+Then —————————
+
+ 1.   lsblk    ——>    #It lists info about all available or the specified block devices
+
+######################################################
+
+Now : To create stratis pool when having 3 partition like  -  /dev/xvda , /dev/xvdb , /dev/xvdc
+
+1. stratis pool create test-pool   /dev/xvda   /dev/xvdb
+2. stratis pool add-data test-pool   /dev/xvdc
+
+Now to check the output of pool command - - 
+
+1. stratis blockdev list    - - - to check every block of pool
+2. stratis pool list    — - - it enlist pool list
+
+#####################################################
+NOW TO CREATE FILE SYSTEM in stratis
+
+1. stratis filesystem create test-pool test-fs1
+2. stratis filesystem create test-pool test-fs2
+
+#Now to enlist all filesystem that has been created 
+
+- stratis filesystem list
+
+######################################################
+NOW TO CREATE FILE SYSTEM in / 
+
+1. mkdir /test-fs1
+2. mkdir /test-fs2
+
+######################################################
+NOW TO MOUNT STRATIS FILESYSTEM to Local Filesystem where we can upload files
+
+
+1. mount /stratis/test-pool/test-fs1 /test-fs1
+2. mount /stratis/test-pool/test-fs1 /test-fs2
+
+Now to check of how much space it has taken - - - 
+
+ df -h  |  grep test-fs
+
+######################################################
+
+NOW FOR SNAPSHOT
+
+1. echo 'this is an important file, do not delete' > /test-fs1/importantfile
+2. stratis filesystem snapshot test-pool test-fs1 test-fs1-snap
+3. stratis filesystem
+4. mkdir /test-fs1-snap
+5. mount /stratis/test-pool/test-fs1-snap /test-fs1-snap/
+
+########################################################
+
+NOW IMPORT DATA FROM SNAPSHOT
+
+1. First delete the test-fs1 by unmounting it
+    umount /test-fs1
+  stratis filesystem destroy test-pool test-fs1
+
+2. Now from stratis … creating test-fs1 from test-fs1-snap
+
+	 stratis filesystem snapshot test-pool test-fs1-snap test-fs1
+
+3. Now mounting test-fs1 from stratis to home directory /test-fs1
+
+	mount /stratis/test-pool/test-fs1 /test-fs1
+
+
+
+
+##########################################################
+
+
+
+ 
+ 
+
+
+
